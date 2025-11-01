@@ -524,7 +524,9 @@ class Task:
                     'destination path of a file mount, as it will be used '
                     'by the workdir. If uploading a file/folder to the '
                     'workdir is needed, please specify the full path to '
-                    'the file/folder.')
+                    'the file/folder.\n'
+                    f'Hint: Use {constants.SKY_REMOTE_WORKDIR}/myfile or '
+                    f'{constants.SKY_REMOTE_WORKDIR}/myfolder instead.')
 
     def _validate_path(self, path: str, location: str):
         if path.endswith('/'):
@@ -1326,7 +1328,9 @@ class Task:
                         'destination path of a file mount, as it will be used '
                         'by the workdir. If uploading a file/folder to the '
                         'workdir is needed, please specify the full path to '
-                        'the file/folder.')
+                        'the file/folder.\n'
+                        f'Hint: Use {constants.SKY_REMOTE_WORKDIR}/myfile or '
+                        f'{constants.SKY_REMOTE_WORKDIR}/myfolder instead.')
 
             if data_utils.is_cloud_store_url(target):
                 with ux_utils.print_exception_no_traceback():

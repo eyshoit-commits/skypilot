@@ -185,3 +185,20 @@ def test_replace_envs_in_workdir(tmpdir, tmp_path):
             """), tmp_path)
     task = Task.from_yaml(config_path)
     assert task.workdir == tmpdir
+
+
+def test_sky_workdir_mount_with_workdir_hint(tmp_path):
+    """Test that mounting to ~/sky_workdir with workdir set shows helpful hint."""
+    config_path = _create_config_file(
+        textwrap.dedent(f"""\
+            name: test_task
+            workdir: .
+            file_mounts:
+                ~/sky_workdir:
+                    source: /local/path
+            """), tmp_path)
+    with pytest.raises(ValueError) as e:
+        Task.from_yaml(config_path)
+    error_msg = str(e.value)
+    assert 'Cannot use \'~/sky_workdir\' as a destination path' in error_msg
+    assert 'Hint: Use ~/sky_workdir/myfile or ~/sky_workdir/myfolder instead' in error_msg
