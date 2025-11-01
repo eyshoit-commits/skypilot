@@ -513,20 +513,24 @@ class Task:
                             'locally. To fix: check if it exists, and correct '
                             'the path.')
 
+    def _raise_sky_workdir_mount_error(self):
+        """Raise an error when trying to mount to ~/sky_workdir."""
+        with ux_utils.print_exception_no_traceback():
+            raise ValueError(
+                f'Cannot use {constants.SKY_REMOTE_WORKDIR!r} as a '
+                'destination path of a file mount, as it will be used '
+                'by the workdir. If uploading a file/folder to the '
+                'workdir is needed, please specify the full path to '
+                'the file/folder.\n'
+                f'Hint: Use {constants.SKY_REMOTE_WORKDIR}/myfile or '
+                f'{constants.SKY_REMOTE_WORKDIR}/myfolder instead.')
+
     def _validate_mount_path(self, path: str, location: str):
         self._validate_path(path, location)
         # TODO(zhwu): /home/username/sky_workdir as the target path need
         # to be filtered out as well.
         if (path == constants.SKY_REMOTE_WORKDIR and self.workdir is not None):
-            with ux_utils.print_exception_no_traceback():
-                raise ValueError(
-                    f'Cannot use {constants.SKY_REMOTE_WORKDIR!r} as a '
-                    'destination path of a file mount, as it will be used '
-                    'by the workdir. If uploading a file/folder to the '
-                    'workdir is needed, please specify the full path to '
-                    'the file/folder.\n'
-                    f'Hint: Use {constants.SKY_REMOTE_WORKDIR}/myfile or '
-                    f'{constants.SKY_REMOTE_WORKDIR}/myfolder instead.')
+            self._raise_sky_workdir_mount_error()
 
     def _validate_path(self, path: str, location: str):
         if path.endswith('/'):
@@ -1322,15 +1326,7 @@ class Task:
             # to be filtered out as well.
             if (target == constants.SKY_REMOTE_WORKDIR and
                     self.workdir is not None):
-                with ux_utils.print_exception_no_traceback():
-                    raise ValueError(
-                        f'Cannot use {constants.SKY_REMOTE_WORKDIR!r} as a '
-                        'destination path of a file mount, as it will be used '
-                        'by the workdir. If uploading a file/folder to the '
-                        'workdir is needed, please specify the full path to '
-                        'the file/folder.\n'
-                        f'Hint: Use {constants.SKY_REMOTE_WORKDIR}/myfile or '
-                        f'{constants.SKY_REMOTE_WORKDIR}/myfolder instead.')
+                self._raise_sky_workdir_mount_error()
 
             if data_utils.is_cloud_store_url(target):
                 with ux_utils.print_exception_no_traceback():
